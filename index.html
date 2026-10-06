@@ -1,36 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Use UTF-8 characters, including the emoji used throughout the portal. -->
     <meta charset="UTF-8" />
-
-    <!-- Make layout dimensions responsive on phones and other small screens. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Sets the browser UI color on supported mobile browsers. Updated by JavaScript per theme. -->
     <meta name="theme-color" content="#f5e4c5" />
 
     <script>
-      /*
-        Apply the saved/system-preferred theme before the page renders.
-
-        Running this in <head> prevents a visible “flash” of the wrong theme
-        while the page loads. A saved choice takes priority over the operating
-        system’s light/dark preference.
-      */
       (() => {
         const savedTheme = localStorage.getItem("acc-portal-theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
         const theme = savedTheme || (prefersDark ? "dark" : "light");
 
-        // CSS uses html[data-theme="dark"] to activate the dark color variables.
         if (theme === "dark") {
           document.documentElement.dataset.theme = "dark";
         }
       })();
     </script>
 
-    <!-- Inline SVG favicon, so no separate image file is needed. -->
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>"
@@ -39,12 +27,6 @@
     <title>ACC PORTAL</title>
 
     <style>
-      /*
-        Light-theme design tokens.
-
-        Using CSS custom properties makes it easy to maintain the palette:
-        components use variables instead of hard-coded colors.
-      */
       :root {
         color-scheme: light;
 
@@ -60,19 +42,29 @@
         --green: #516b45;
         --gold: #f5c95f;
 
-        /* Layered gradients create the warm, illustrated page background. */
         --page-gradient:
-          radial-gradient(circle at 18% 10%, rgba(255, 180, 86, 0.52), transparent 25rem),
-          radial-gradient(circle at 82% 88%, rgba(100, 132, 82, 0.3), transparent 29rem),
-          linear-gradient(135deg, #fff7e8 0%, var(--bg) 47%, var(--bg-deep) 100%);
+          radial-gradient(
+            circle at 18% 10%,
+            rgba(255, 180, 86, 0.52),
+            transparent 25rem
+          ),
+          radial-gradient(
+            circle at 82% 88%,
+            rgba(100, 132, 82, 0.3),
+            transparent 29rem
+          ),
+          linear-gradient(
+            135deg,
+            #fff7e8 0%,
+            var(--bg) 47%,
+            var(--bg-deep) 100%
+          );
 
-        /* Frame colors around the embedded Google Document. */
         --frame: #242628;
         --frame-outer-outline: #e1ded8;
         --frame-inner-outline: #e1ded8;
         --iframe-fallback: #ffffff;
 
-        /* Theme-toggle button colors for light mode. */
         --theme-button-bg: #17385f;
         --theme-button-hover: #214d80;
         --theme-button-border: #9bc7ff;
@@ -80,12 +72,6 @@
         --theme-button-icon: #d8eaff;
       }
 
-      /*
-        Dark-theme overrides.
-
-        This selector becomes active when JavaScript adds:
-        <html data-theme="dark">
-      */
       html[data-theme="dark"] {
         color-scheme: dark;
 
@@ -102,16 +88,28 @@
         --gold: #f5c95f;
 
         --page-gradient:
-          radial-gradient(circle at 18% 10%, rgba(231, 122, 50, 0.19), transparent 25rem),
-          radial-gradient(circle at 82% 88%, rgba(81, 107, 69, 0.24), transparent 29rem),
-          linear-gradient(135deg, #34383c 0%, var(--bg) 47%, var(--bg-deep) 100%);
+          radial-gradient(
+            circle at 18% 10%,
+            rgba(231, 122, 50, 0.19),
+            transparent 25rem
+          ),
+          radial-gradient(
+            circle at 82% 88%,
+            rgba(81, 107, 69, 0.24),
+            transparent 29rem
+          ),
+          linear-gradient(
+            135deg,
+            #34383c 0%,
+            var(--bg) 47%,
+            var(--bg-deep) 100%
+          );
 
         --frame: #242628;
         --frame-outer-outline: #fff3df;
         --frame-inner-outline: #fff3df;
         --iframe-fallback: #ffffff;
 
-        /* Theme-toggle colors change so the button looks like a light-mode control. */
         --theme-button-bg: #fff1a8;
         --theme-button-hover: #ffe67a;
         --theme-button-border: #c68019;
@@ -119,27 +117,16 @@
         --theme-button-icon: #8a5200;
       }
 
-      /*
-        Global reset:
-        - Makes width/height calculations include padding and borders.
-        - Applies the portal’s playful font to all elements.
-      */
       * {
         box-sizing: border-box;
         font-family: "Comic Sans MS", "Comic Sans", cursive;
       }
 
-      /* Ensures the background fills even if the page content is short. */
       html {
         min-height: 100%;
         background: var(--bg-deep);
       }
 
-      /*
-        Main page canvas.
-        Horizontal overflow is disabled because decorative fixed elements may
-        otherwise create unwanted side-scrolling on narrow screens.
-      */
       body {
         min-height: 100vh;
         margin: 0;
@@ -149,16 +136,11 @@
         transition: background 240ms ease, color 240ms ease;
       }
 
-      /* Custom highlight colors when users select text. */
       *::selection {
         color: var(--ink);
         background: var(--gold);
       }
 
-      /*
-        Centers the portal card both vertically and horizontally.
-        The high z-index keeps core content above background decorations.
-      */
       .portal-shell {
         position: relative;
         z-index: 2;
@@ -168,10 +150,6 @@
         padding: 86px 112px;
       }
 
-      /*
-        Shared base styles for the four decorative corner groups.
-        pointer-events: none ensures decorative emoji never block clicks.
-      */
       .border-decoration {
         position: fixed;
         z-index: 0;
@@ -180,7 +158,6 @@
         opacity: 0.95;
       }
 
-      /* Typography for the corner emoji clusters. */
       .corner-art {
         max-width: 270px;
         color: var(--orange-light);
@@ -190,16 +167,30 @@
         text-shadow: 2px 3px 0 rgba(0, 0, 0, 0.28);
       }
 
-      /* Unique position and rotation for each corner decoration. */
-      .top-left { top: 17px; left: 24px; transform: rotate(-9deg); }
-      .top-right { top: 15px; right: 96px; transform: rotate(10deg); }
-      .bottom-left { bottom: 14px; left: 23px; transform: rotate(8deg); }
-      .bottom-right { right: 24px; bottom: 14px; transform: rotate(-8deg); }
+      .top-left {
+        top: 17px;
+        left: 24px;
+        transform: rotate(-9deg);
+      }
 
-      /*
-        Repeating emoji strips at the top and bottom of the viewport.
-        They stay fixed while the portal content scrolls.
-      */
+      .top-right {
+        top: 15px;
+        right: 96px;
+        transform: rotate(10deg);
+      }
+
+      .bottom-left {
+        bottom: 14px;
+        left: 23px;
+        transform: rotate(8deg);
+      }
+
+      .bottom-right {
+        right: 24px;
+        bottom: 14px;
+        transform: rotate(-8deg);
+      }
+
       .forest-strip {
         position: fixed;
         z-index: 0;
@@ -221,10 +212,6 @@
       .forest-top { top: 7px; }
       .forest-bottom { bottom: 5px; }
 
-      /*
-        Circular fox stickers placed over the page background.
-        Like the other decorations, they are intentionally non-interactive.
-      */
       .fox-sticker {
         position: fixed;
         z-index: 1;
@@ -243,13 +230,18 @@
         user-select: none;
       }
 
-      .fox-one { top: 103px; left: 18px; transform: rotate(-10deg); }
-      .fox-two { right: 18px; bottom: 99px; transform: rotate(11deg); }
+      .fox-one {
+        top: 103px;
+        left: 18px;
+        transform: rotate(-10deg);
+      }
 
-      /*
-        The main content panel containing the page title, document preview,
-        document link, and footer message.
-      */
+      .fox-two {
+        right: 18px;
+        bottom: 99px;
+        transform: rotate(11deg);
+      }
+
       .portal-card {
         position: relative;
         z-index: 3;
@@ -264,7 +256,6 @@
         transition: background-color 240ms ease, border-color 240ms ease;
       }
 
-      /* Horizontally centers the fox-title-fox header arrangement. */
       .portal-header {
         display: flex;
         align-items: center;
@@ -283,7 +274,6 @@
         text-shadow: 3px 4px 0 var(--brown);
       }
 
-      /* Decorative fox icons on either side of the title. */
       .header-fox {
         color: var(--orange-light);
         font-size: clamp(2.3rem, 5vw, 4.2rem);
@@ -291,10 +281,92 @@
         filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.22));
       }
 
-      /*
-        Outer frame for the embedded Google Document.
-        overflow: hidden keeps the rounded corners clean around the iframe.
-      */
+      /* Floating, draggable fundraiser panel. */
+      .fundraiser {
+        position: fixed;
+        z-index: 20;
+        top: 16px;
+        left: 16px;
+        width: min(270px, calc(100vw - 90px));
+        border: 3px solid var(--orange);
+        border-radius: 16px;
+        color: var(--ink);
+        background: #F0E9DC;
+        color-scheme: light;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      }
+
+      .fundraiser-handle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 9px 10px;
+        border-radius: 12px 12px 0 0;
+        background: var(--orange-light);
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+      }
+
+      .fundraiser.dragging .fundraiser-handle {
+        cursor: grabbing;
+      }
+
+      .fundraiser-handle h2 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 0.95rem;
+        line-height: 1.3;
+      }
+
+      .fundraiser-toggle {
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: 2px solid var(--brown);
+        border-radius: 8px;
+        color: var(--ink);
+        background: #F0E9DC;
+        font-size: 1.2rem;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .fundraiser-toggle:hover {
+        background: var(--gold);
+      }
+
+      .fundraiser-handle:focus-visible,
+      .fundraiser-toggle:focus-visible {
+        outline: 3px solid var(--brown);
+        outline-offset: 3px;
+      }
+
+      .fundraiser-body {
+        padding: 12px;
+        max-height: min(380px, calc(100dvh - 90px));
+        overflow: auto;
+        text-align: center;
+      }
+
+      .fundraiser-body[hidden] {
+        display: none;
+      }
+
+      .fundraiser-body p {
+        margin: 0 0 12px;
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+
+      .fundraiser.collapsed .fundraiser-handle {
+        border-radius: 12px;
+      }
+
       .document-wrap {
         min-height: 720px;
         overflow: hidden;
@@ -302,10 +374,12 @@
         border-radius: 16px;
         background: var(--frame);
         box-shadow: inset 0 0 0 4px var(--frame-inner-outline);
-        transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+        transition:
+          background-color 240ms ease,
+          border-color 240ms ease,
+          box-shadow 240ms ease;
       }
 
-      /* The published Google Document preview. */
       .document-wrap iframe {
         display: block;
         width: 100%;
@@ -314,17 +388,12 @@
         background: var(--iframe-fallback);
       }
 
-      /* Centers the “open document” link below the embedded preview. */
       .document-button-wrap {
         display: flex;
         justify-content: center;
         margin-top: 18px;
       }
 
-      /*
-        Styled anchor that acts like a button.
-        It opens the editable/shareable Google Document in another browser tab.
-      */
       .document-button {
         display: inline-flex;
         align-items: center;
@@ -345,10 +414,12 @@
         text-decoration: none;
         cursor: pointer;
         transform: translateY(0) scale(1);
-        transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+        transition:
+          transform 160ms ease,
+          background-color 160ms ease,
+          box-shadow 160ms ease;
       }
 
-      /* Hover styling makes the document link feel raised and interactive. */
       .document-button:hover {
         background: var(--gold);
         box-shadow:
@@ -357,7 +428,6 @@
         transform: translateY(-2px) scale(1.06);
       }
 
-      /* Click feedback triggers a short squash-and-pop animation. */
       .document-button:active {
         background: var(--gold);
         animation: button-pop 260ms ease-in-out;
@@ -366,18 +436,12 @@
           0 4px 8px rgba(0, 0, 0, 0.22);
       }
 
-      /*
-        Strong keyboard-focus indicator for accessibility.
-        :focus-visible generally shows the outline for keyboard navigation
-        without adding it after ordinary mouse clicks.
-      */
       .document-button:focus-visible,
       .theme-button:focus-visible {
         outline: 4px solid var(--gold);
         outline-offset: 4px;
       }
 
-      /* Elastic press animation used by the document button. */
       @keyframes button-pop {
         0% { transform: translateY(-2px) scale(1.06); }
         45% { transform: translateY(1px) scale(0.92); }
@@ -385,7 +449,6 @@
         100% { transform: translateY(0) scale(1); }
       }
 
-      /* Short descriptive message beneath the document link. */
       .portal-footer {
         margin: 14px 0 0;
         color: var(--gold);
@@ -393,10 +456,6 @@
         text-align: center;
       }
 
-      /*
-        Fixed dark/light-mode toggle in the upper-right corner.
-        z-index: 10 keeps it accessible above all page decorations and content.
-      */
       .theme-button {
         position: fixed;
         z-index: 10;
@@ -419,10 +478,13 @@
         line-height: 1;
         cursor: pointer;
         transform: translateY(0) rotate(0deg) scale(1);
-        transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+        transition:
+          transform 160ms ease,
+          background-color 160ms ease,
+          border-color 160ms ease,
+          box-shadow 160ms ease;
       }
 
-      /* Adds lift, rotation, and scale feedback on hover. */
       .theme-button:hover {
         background: var(--theme-button-hover);
         box-shadow:
@@ -431,7 +493,6 @@
         transform: translateY(-2px) rotate(10deg) scale(1.08);
       }
 
-      /* Click feedback for the theme-toggle button. */
       .theme-button:active {
         box-shadow:
           0 2px 0 var(--theme-button-shadow),
@@ -439,16 +500,10 @@
         animation: theme-button-pop 260ms ease-in-out;
       }
 
-      /*
-        Icon visibility reflects the action the button will take:
-        - Light mode: show moon, meaning “switch to dark mode.”
-        - Dark mode: show sun, meaning “switch to light mode.”
-      */
       .theme-button .sun-icon { display: none; }
       html[data-theme="dark"] .theme-button .moon-icon { display: none; }
       html[data-theme="dark"] .theme-button .sun-icon { display: inline; }
 
-      /* Elastic press animation used by the theme button. */
       @keyframes theme-button-pop {
         0% { transform: translateY(-2px) rotate(10deg) scale(1.08); }
         45% { transform: translateY(1px) rotate(-8deg) scale(0.9); }
@@ -456,10 +511,6 @@
         100% { transform: translateY(0) rotate(0deg) scale(1); }
       }
 
-      /*
-        Respect user accessibility preferences by disabling transitions
-        and press animations when reduced motion is requested.
-      */
       @media (prefers-reduced-motion: reduce) {
         .document-button,
         .theme-button,
@@ -475,31 +526,54 @@
         }
       }
 
-      /*
-        Mobile layout adjustments:
-        reduce outer spacing, decoration sizes, frame dimensions, and
-        theme button size so the portal fits smaller screens comfortably.
-      */
       @media (max-width: 760px) {
-        .portal-shell { padding: 76px 21px; }
+        .portal-shell { padding: 86px 21px 76px; }
         .portal-card { padding: 12px; border-radius: 19px; }
         .portal-header { gap: 8px; margin-bottom: 12px; }
+
+        .fundraiser {
+          top: 12px;
+          left: 12px;
+          width: min(230px, calc(100vw - 84px));
+        }
+
+        .fundraiser-handle h2 { font-size: 0.85rem; }
+        .fundraiser-body { padding: 10px; }
+
         .document-wrap { min-height: 600px; border-width: 5px; }
         .document-wrap iframe { height: 600px; border-width: 3px; }
-        .document-button { width: 100%; max-width: 340px; padding: 0.9rem 1rem; }
+        .document-button {
+          width: 100%;
+          max-width: 340px;
+          padding: 0.9rem 1rem;
+        }
+
         .corner-art { font-size: 1.55rem; }
         .forest-strip { font-size: 1.25rem; letter-spacing: 0.25rem; }
-        .fox-sticker { width: 58px; height: 58px; border-width: 2px; font-size: 2.35rem; }
+        .fox-sticker {
+          width: 58px;
+          height: 58px;
+          border-width: 2px;
+          font-size: 2.35rem;
+        }
+
         .fox-one { top: 65px; left: 6px; }
         .fox-two { right: 6px; bottom: 65px; }
         .top-right { right: 68px; }
-        .theme-button { top: 16px; right: 14px; width: 48px; height: 48px; border-width: 2px; font-size: 1.65rem; }
+
+        .theme-button {
+          top: 16px;
+          right: 14px;
+          width: 48px;
+          height: 48px;
+          border-width: 2px;
+          font-size: 1.65rem;
+        }
       }
     </style>
   </head>
 
   <body>
-    <!-- Persistent control for switching between light and dark themes. -->
     <button
       class="theme-button"
       id="theme-button"
@@ -508,36 +582,79 @@
       aria-pressed="false"
       title="Switch to dark mode"
     >
-      <!-- CSS displays one of these icons depending on the active theme. -->
       <span class="moon-icon" aria-hidden="true">🌙</span>
       <span class="sun-icon" aria-hidden="true">☀️</span>
     </button>
 
-    <!-- Non-interactive seasonal/forest decorations around the viewport. -->
-    <div class="border-decoration top-left"><div class="corner-art">🍂 ✦ 🍄<br />🌿 🐾 🌙</div></div>
-    <div class="border-decoration top-right"><div class="corner-art">🌙 🐾 🌿<br />🍄 ✦ 🍂</div></div>
-    <div class="border-decoration bottom-left"><div class="corner-art">🌿 🍄 ✦<br />🐾 🍂 🌙</div></div>
-    <div class="border-decoration bottom-right"><div class="corner-art">✦ 🍄 🌿<br />🌙 🍂 🐾</div></div>
+    <!-- Floating fundraiser, separate from the main portal card. -->
+    <section
+      class="fundraiser"
+      id="fundraiser"
+      aria-labelledby="fundraiser-heading"
+    >
+      <div
+        class="fundraiser-handle"
+        id="fundraiser-handle"
+        tabindex="0"
+        aria-label="Move fundraiser panel. Drag or use arrow keys."
+        title="Drag to move, or focus here and use arrow keys"
+      >
+        <h2 id="fundraiser-heading">💛 Club supplies • $175 goal</h2>
 
-    <!-- Fixed decorative emoji borders at the top and bottom of the page. -->
-    <div class="forest-strip forest-top">🌲 🍂 ✦ 🌿 🍄 🐾 🌲 🍂 ✦ 🌿 🍄 🐾 🌙 🌲 🍂 ✦ 🌿 🍄 🐾 🌙</div>
-    <div class="forest-strip forest-bottom">🍄 🌿 🐾 ✦ 🍂 🌲 🌙 🍄 🌿 🐾 ✦ 🍂 🌲 🌙 🍄 🌿 🐾 ✦ 🍂 🌲 🌙</div>
+        <button
+          class="fundraiser-toggle"
+          id="fundraiser-toggle"
+          type="button"
+          aria-label="Minimize fundraiser"
+          aria-expanded="true"
+          aria-controls="fundraiser-body"
+          title="Minimize fundraiser"
+        >−</button>
+      </div>
 
-    <!-- Decorative fox stickers placed behind the main portal card. -->
+      <div class="fundraiser-body" id="fundraiser-body">
+        <p>Help us reach $175 for club supplies! Every donation helps 💛</p>
+
+        <!-- Elfsight Number Counter | ACC Money Goal test -->
+        <script src="https://elfsightcdn.com/platform.js" async></script>
+        <div
+          class="elfsight-app-cddc3394-1c83-4d8a-a52a-54eba497a621"
+          data-elfsight-app-lazy
+        ></div>
+      </div>
+    </section>
+
+    <div class="border-decoration top-left">
+      <div class="corner-art">🍂 ✦ 🍄<br />🌿 🐾 🌙</div>
+    </div>
+    <div class="border-decoration top-right">
+      <div class="corner-art">🌙 🐾 🌿<br />🍄 ✦ 🍂</div>
+    </div>
+    <div class="border-decoration bottom-left">
+      <div class="corner-art">🌿 🍄 ✦<br />🐾 🍂 🌙</div>
+    </div>
+    <div class="border-decoration bottom-right">
+      <div class="corner-art">✦ 🍄 🌿<br />🌙 🍂 🐾</div>
+    </div>
+
+    <div class="forest-strip forest-top">
+      🌲 🍂 ✦ 🌿 🍄 🐾 🌲 🍂 ✦ 🌿 🍄 🐾 🌙 🌲 🍂 ✦ 🌿 🍄 🐾 🌙
+    </div>
+    <div class="forest-strip forest-bottom">
+      🍄 🌿 🐾 ✦ 🍂 🌲 🌙 🍄 🌿 🐾 ✦ 🍂 🌲 🌙 🍄 🌿 🐾 ✦ 🍂 🌲 🌙
+    </div>
+
     <div class="fox-sticker fox-one">🦊</div>
     <div class="fox-sticker fox-two">🦊</div>
 
-    <!-- Main accessible content region. -->
     <main class="portal-shell">
       <section class="portal-card" aria-label="ACC PORTAL">
-        <!-- Branded portal heading. Decorative foxes are hidden from screen readers. -->
         <header class="portal-header">
           <span class="header-fox" aria-hidden="true">🦊</span>
           <h1>ACC PORTAL</h1>
           <span class="header-fox" aria-hidden="true">🦊</span>
         </header>
 
-        <!-- Embedded published version of the Google Document. -->
         <div class="document-wrap">
           <iframe
             title="ACC PORTAL Google Document"
@@ -546,7 +663,6 @@
           ></iframe>
         </div>
 
-        <!-- Opens the full Google Document in a separate tab safely. -->
         <div class="document-button-wrap">
           <a
             class="document-button"
@@ -558,67 +674,40 @@
           </a>
         </div>
 
-        <!-- Brief portal description shown below the action button. -->
-        <p class="portal-footer">✦ Welcome to the fox den — your activities, slides, and updates live here. ✦</p>
+        <p class="portal-footer">
+          ✦ Welcome to the fox den — your activities, slides, and updates
+          live here. ✦
+        </p>
       </section>
     </main>
 
     <script>
-      /*
-        Store frequently used DOM elements once, rather than querying the
-        document every time the theme changes.
-      */
+      /* Theme toggle. */
       const themeButton = document.getElementById("theme-button");
       const root = document.documentElement;
       const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
-      /*
-        Returns the current page theme.
-
-        Light is the default state: if data-theme is absent, the function
-        deliberately treats the theme as "light".
-      */
       function currentTheme() {
         return root.dataset.theme === "dark" ? "dark" : "light";
       }
 
-      /*
-        Synchronizes accessible button labels, pressed state, tooltip text,
-        and the mobile browser theme color with the active visual theme.
-      */
       function updateThemeButton() {
         const isDark = currentTheme() === "dark";
-
-        themeButton.setAttribute(
-          "aria-label",
-          isDark ? "Switch to light mode" : "Switch to dark mode"
-        );
-
-        themeButton.setAttribute("aria-pressed", String(isDark));
-
-        themeButton.title = isDark
+        const label = isDark
           ? "Switch to light mode"
           : "Switch to dark mode";
 
+        themeButton.setAttribute("aria-label", label);
+        themeButton.setAttribute("aria-pressed", String(isDark));
+        themeButton.title = label;
         themeColorMeta.setAttribute(
           "content",
           isDark ? "#25282b" : "#f5e4c5"
         );
       }
 
-      /*
-        Set correct labels on first load. This is especially important if the
-        earlier <head> script restored a dark theme from localStorage.
-      */
       updateThemeButton();
 
-      /*
-        Toggle between themes when the user presses the button.
-
-        Dark mode is enabled by adding data-theme="dark"; returning to light
-        mode removes the attribute and lets the default :root variables apply.
-        The selected value is then saved for the user's next visit.
-      */
       themeButton.addEventListener("click", () => {
         const nextTheme = currentTheme() === "dark" ? "light" : "dark";
 
@@ -631,6 +720,122 @@
         localStorage.setItem("acc-portal-theme", nextTheme);
         updateThemeButton();
       });
+
+      /* Floating fundraiser controls. */
+      const fundraiser = document.getElementById("fundraiser");
+      const handle = document.getElementById("fundraiser-handle");
+      const toggle = document.getElementById("fundraiser-toggle");
+      const fundraiserBody = document.getElementById("fundraiser-body");
+
+      function moveFundraiser(x, y) {
+        const margin = 8;
+        const maxX = Math.max(
+          margin,
+          window.innerWidth - fundraiser.offsetWidth - margin
+        );
+        const maxY = Math.max(
+          margin,
+          window.innerHeight - fundraiser.offsetHeight - margin
+        );
+
+        fundraiser.style.left =
+          Math.min(Math.max(margin, x), maxX) + "px";
+        fundraiser.style.top =
+          Math.min(Math.max(margin, y), maxY) + "px";
+      }
+
+      function keepFundraiserOnScreen() {
+        const rect = fundraiser.getBoundingClientRect();
+        moveFundraiser(rect.left, rect.top);
+      }
+
+      toggle.addEventListener("click", () => {
+        const collapsed = !fundraiserBody.hidden;
+
+        fundraiserBody.hidden = collapsed;
+        fundraiser.classList.toggle("collapsed", collapsed);
+        toggle.textContent = collapsed ? "+" : "−";
+        toggle.setAttribute("aria-expanded", String(!collapsed));
+
+        const label = collapsed
+          ? "Expand fundraiser"
+          : "Minimize fundraiser";
+
+        toggle.setAttribute("aria-label", label);
+        toggle.title = label;
+
+        keepFundraiserOnScreen();
+      });
+
+      let drag = null;
+
+      handle.addEventListener("pointerdown", (event) => {
+        if (event.target.closest("button")) return;
+        if (!event.isPrimary || event.button !== 0) return;
+
+        const rect = fundraiser.getBoundingClientRect();
+
+        drag = {
+          pointerId: event.pointerId,
+          offsetX: event.clientX - rect.left,
+          offsetY: event.clientY - rect.top
+        };
+
+        handle.setPointerCapture(event.pointerId);
+        fundraiser.classList.add("dragging");
+        event.preventDefault();
+      });
+
+      handle.addEventListener("pointermove", (event) => {
+        if (!drag || event.pointerId !== drag.pointerId) return;
+
+        moveFundraiser(
+          event.clientX - drag.offsetX,
+          event.clientY - drag.offsetY
+        );
+      });
+
+      function endDrag(event) {
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        drag = null;
+        fundraiser.classList.remove("dragging");
+      }
+
+      handle.addEventListener("pointerup", endDrag);
+      handle.addEventListener("pointercancel", endDrag);
+      handle.addEventListener("lostpointercapture", endDrag);
+
+      /* Arrow-key movement for keyboard users. */
+      handle.addEventListener("keydown", (event) => {
+        if (event.target !== handle) return;
+
+        const step = event.shiftKey ? 30 : 10;
+        const directions = {
+          ArrowLeft: [-step, 0],
+          ArrowRight: [step, 0],
+          ArrowUp: [0, -step],
+          ArrowDown: [0, step]
+        };
+
+        const direction = directions[event.key];
+        if (!direction) return;
+
+        event.preventDefault();
+
+        const rect = fundraiser.getBoundingClientRect();
+        moveFundraiser(
+          rect.left + direction[0],
+          rect.top + direction[1]
+        );
+      });
+
+      window.addEventListener("resize", keepFundraiserOnScreen);
+
+      /* Keep the panel visible if the embedded counter changes height. */
+      const fundraiserObserver = new ResizeObserver(
+        keepFundraiserOnScreen
+      );
+      fundraiserObserver.observe(fundraiser);
     </script>
   </body>
 </html>
