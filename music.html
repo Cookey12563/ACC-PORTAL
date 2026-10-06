@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f5e4c5" />
+
+  <script>
+    (() => {
+      const savedTheme = localStorage.getItem("acc-portal-theme");
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
+      if ((savedTheme || (prefersDark ? "dark" : "light")) === "dark") {
+        document.documentElement.dataset.theme = "dark";
+      }
+    })();
+  </script>
+
+  <link
+    rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>"
+  />
+
+  <title>ACC PORTAL</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+
+      --bg: #f5e4c5;
+      --bg-deep: #d7b98a;
+      --card: #fff3df;
+      --cream: #e1ded8;
+      --ink: #27211c;
+      --orange: #c96022;
+      --orange-light: #f7b45d;
+      --brown: #6e3d24;
+      --gold: #f5c95f;
+
+      --page-gradient:
+        radial-gradient(
+          circle at 18% 10%,
+          rgba(255, 180, 86, .52),
+          transparent 25rem
+        ),
+        radial-gradient(
+          circle at 82% 88%,
+          rgba(100, 132, 82, .3),
+          transparent 29rem
+        ),
+        linear-gradient(
+          135deg,
+          #fff7e8 0%,
+          var(--bg) 47%,
+          var(--bg-deep) 100%
+        );
+
+      --frame: #242628;
+      --frame-outer-outline: #e1ded8;
+      --frame-inner-outline: #e1ded8;
+
+      --theme-button-bg: #17385f;
+      --theme-button-hover: #214d80;
+      --theme-button-border: #9bc7ff;
+      --theme-button-shadow: #0b1d33;
+      --theme-button-icon: #d8eaff;
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+
+      --bg: #25282b;
+      --bg-deep: #17191b;
+      --card: #2d3033;
+      --cream: #fff3df;
+      --orange: #e77a32;
+      --orange-light: #ffab5c;
+
+      --page-gradient:
+        radial-gradient(
+          circle at 18% 10%,
+          rgba(231, 122, 50, .19),
+          transparent 25rem
+        ),
+        radial-gradient(
+          circle at 82% 88%,
+          rgba(81, 107, 69, .24),
+          transparent 29rem
+        ),
+        linear-gradient(
+          135deg,
+          #34383c 0%,
+          var(--bg) 47%,
+          var(--bg-deep) 100%
+        );
+
+      --frame-outer-outline: #fff3df;
+      --frame-inner-outline: #fff3df;
+
+      --theme-button-bg: #fff1a8;
+      --theme-button-hover: #ffe67a;
+      --theme-button-border: #c68019;
+      --theme-button-shadow: #8e5513;
+      --theme-button-icon: #8a5200;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Comic Sans MS", "Comic Sans", cursive;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg-deep);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--cream);
+      background: var(--page-gradient);
+      transition: background 240ms ease, color 240ms ease;
+    }
+
+    *::selection {
+      color: var(--ink);
+      background: var(--gold);
+    }
+
+    .portal-shell {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      padding: 86px 112px;
+    }
+
+    /* Decorative corners. */
+    .border-decoration {
+      position: fixed;
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+      opacity: .95;
+    }
+
+    .corner-art {
+      max-width: 270px;
+      color: var(--orange-light);
+      font-size: clamp(2rem, 4vw, 4.2rem);
+      line-height: 1.08;
+      letter-spacing: .05em;
+      text-shadow: 2px 3px 0 rgba(0, 0, 0, .28);
+    }
+
+    .top-left {
+      top: 17px;
+      left: 24px;
+      transform: rotate(-9deg);
+    }
+
+    .top-right {
+      top: 15px;
+      right: 96px;
+      transform: rotate(10deg);
+    }
+
+    .bottom-left {
+      bottom: 14px;
+      left: 23px;
+      transform: rotate(8deg);
+    }
+
+    .bottom-right {
+      right: 24px;
+      bottom: 14px;
+      transform: rotate(-8deg);
+    }
+
+    /* Decorative emoji borders. */
+    .forest-strip {
+      position: fixed;
+      z-index: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      overflow: hidden;
+      color: rgba(255, 171, 92, .63);
+      font-size: 2rem;
+      line-height: 1.1;
+      letter-spacing: .55rem;
+      white-space: nowrap;
+      text-align: center;
+      text-shadow: 1px 2px 0 rgba(0, 0, 0, .3);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .forest-top { top: 7px; }
+    .forest-bottom { bottom: 5px; }
+
+    /* Fox stickers. */
+    .fox-sticker {
+      position: fixed;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 92px;
+      height: 92px;
+      border: 3px dashed var(--orange-light);
+      border-radius: 50%;
+      background: rgba(30, 33, 35, .84);
+      color: var(--orange-light);
+      font-size: 3.65rem;
+      line-height: 1;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, .28);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .fox-one {
+      top: 103px;
+      left: 18px;
+      transform: rotate(-10deg);
+    }
+
+    .fox-two {
+      right: 18px;
+      bottom: 99px;
+      transform: rotate(11deg);
+    }
+
+    /* Main portal panel. */
+    .portal-card {
+      position: relative;
+      z-index: 3;
+      width: min(1150px, 100%);
+      padding: 20px;
+      border: 4px solid var(--orange);
+      border-radius: 27px;
+      background: var(--card);
+      box-shadow:
+        0 20px 56px rgba(0, 0, 0, .46),
+        0 0 0 8px rgba(245, 201, 95, .14);
+      transition: background-color 240ms ease, border-color 240ms ease;
+    }
+
+    .portal-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .portal-header h1 {
+      margin: 0;
+      color: var(--cream);
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      letter-spacing: .05em;
+      text-shadow: 3px 4px 0 var(--brown);
+    }
+
+    .header-fox {
+      color: var(--orange-light);
+      font-size: clamp(2.3rem, 5vw, 4.2rem);
+      line-height: 1;
+      filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, .22));
+    }
+
+    /* Back arrow beside the theme toggle. */
+    .back-button {
+      position: fixed;
+      z-index: 21;
+      top: 22px;
+      right: 94px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      margin: 0;
+      padding: 0;
+      border: 3px solid var(--brown);
+      border-radius: 50%;
+      color: var(--ink);
+      background: var(--orange-light);
+      box-shadow:
+        0 5px 0 var(--brown),
+        0 9px 14px rgba(0, 0, 0, .26);
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      text-decoration: none;
+      transition: transform 160ms ease, background-color 160ms ease;
+    }
+
+    .back-button:hover {
+      background: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .back-button:active {
+      transform: translateY(1px);
+    }
+
+    /* Floating fundraiser. */
+    .fundraiser {
+      position: fixed;
+      z-index: 20;
+      top: 16px;
+      left: 16px;
+      width: min(270px, calc(100vw - 180px));
+      border: 3px solid var(--orange);
+      border-radius: 16px;
+      color: var(--ink);
+      background: #F0E9DC;
+      color-scheme: light;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+    }
+
+    .fundraiser-handle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 10px;
+      border-radius: 12px 12px 0 0;
+      background: var(--orange-light);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .fundraiser.dragging .fundraiser-handle {
+      cursor: grabbing;
+    }
+
+    .fundraiser-handle h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: .95rem;
+      line-height: 1.3;
+    }
+
+    .fundraiser-toggle {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 2px solid var(--brown);
+      border-radius: 8px;
+      color: var(--ink);
+      background: #F0E9DC;
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .fundraiser-toggle:hover {
+      background: var(--gold);
+    }
+
+    .fundraiser-handle:focus-visible,
+    .fundraiser-toggle:focus-visible {
+      outline: 3px solid var(--brown);
+      outline-offset: 3px;
+    }
+
+    .fundraiser-body {
+      padding: 12px;
+      max-height: min(380px, calc(100dvh - 90px));
+      overflow: auto;
+      text-align: center;
+    }
+
+    .fundraiser-body[hidden] {
+      display: none;
+    }
+
+    .fundraiser-body p {
+      margin: 0 0 12px;
+      font-size: .85rem;
+      line-height: 1.4;
+    }
+
+    .fundraiser.collapsed .fundraiser-handle {
+      border-radius: 12px;
+    }
+
+    /* Embedded document. */
+    .document-wrap {
+      min-height: 720px;
+      overflow: hidden;
+      border: 7px solid var(--frame-outer-outline);
+      border-radius: 16px;
+      background: var(--frame);
+      box-shadow: inset 0 0 0 4px var(--frame-inner-outline);
+      transition:
+        background-color 240ms ease,
+        border-color 240ms ease,
+        box-shadow 240ms ease;
+    }
+
+    .document-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 720px;
+      border: 4px solid var(--frame-inner-outline);
+      background: #ffffff;
+    }
+
+    .document-button-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    .document-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+      padding: .8rem 1.3rem;
+      border: 3px solid var(--cream);
+      border-radius: 999px;
+      color: var(--ink);
+      background: var(--orange-light);
+      box-shadow:
+        0 5px 0 var(--brown),
+        0 9px 14px rgba(0, 0, 0, .26);
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: .02em;
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        transform 160ms ease,
+        background-color 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .document-button:hover {
+      background: var(--gold);
+      box-shadow:
+        0 6px 0 var(--brown),
+        0 11px 18px rgba(0, 0, 0, .3);
+      transform: translateY(-2px) scale(1.06);
+    }
+
+    .document-button:active {
+      background: var(--gold);
+      animation: button-pop 260ms ease-in-out;
+      box-shadow:
+        0 2px 0 var(--brown),
+        0 4px 8px rgba(0, 0, 0, .22);
+    }
+
+    .back-button:focus-visible,
+    .document-button:focus-visible,
+    .theme-button:focus-visible {
+      outline: 4px solid var(--gold);
+      outline-offset: 4px;
+    }
+
+    @keyframes button-pop {
+      0% { transform: translateY(-2px) scale(1.06); }
+      45% { transform: translateY(1px) scale(.92); }
+      75% { transform: translateY(-1px) scale(1.04); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    .portal-footer {
+      margin: 14px 0 0;
+      color: var(--gold);
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    /* Sun/moon toggle. */
+    .theme-button {
+      position: fixed;
+      z-index: 21;
+      top: 22px;
+      right: 24px;
+      display: inline-grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      padding: 0;
+      border: 3px solid var(--theme-button-border);
+      border-radius: 50%;
+      color: var(--theme-button-icon);
+      background: var(--theme-button-bg);
+      box-shadow:
+        0 5px 0 var(--theme-button-shadow),
+        0 9px 14px rgba(0, 0, 0, .26);
+      font-size: 2rem;
+      line-height: 1;
+      cursor: pointer;
+      transition:
+        transform 160ms ease,
+        background-color 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .theme-button:hover {
+      background: var(--theme-button-hover);
+      transform: translateY(-2px) rotate(10deg) scale(1.08);
+    }
+
+    .theme-button:active {
+      animation: theme-button-pop 260ms ease-in-out;
+    }
+
+    .theme-button .sun-icon {
+      display: none;
+    }
+
+    html[data-theme="dark"] .theme-button .moon-icon {
+      display: none;
+    }
+
+    html[data-theme="dark"] .theme-button .sun-icon {
+      display: inline;
+    }
+
+    @keyframes theme-button-pop {
+      0% { transform: translateY(-2px) rotate(10deg) scale(1.08); }
+      45% { transform: translateY(1px) rotate(-8deg) scale(.9); }
+      75% { transform: translateY(-1px) rotate(6deg) scale(1.05); }
+      100% { transform: translateY(0) rotate(0deg) scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .back-button,
+      .document-button,
+      .theme-button,
+      body,
+      .portal-card,
+      .document-wrap {
+        transition: none;
+        animation: none !important;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .portal-shell {
+        padding: 86px 21px 76px;
+      }
+
+      .portal-card {
+        padding: 12px;
+        border-radius: 19px;
+      }
+
+      .portal-header {
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .back-button {
+        top: 16px;
+        right: 74px;
+        width: 48px;
+        height: 48px;
+        border-width: 2px;
+        font-size: 1.65rem;
+      }
+
+      .fundraiser {
+        top: 12px;
+        left: 12px;
+        width: min(230px, calc(100vw - 144px));
+      }
+
+      .fundraiser-handle h2 {
+        font-size: .85rem;
+      }
+
+      .fundraiser-body {
+        padding: 10px;
+      }
+
+      .document-wrap {
+        min-height: 600px;
+        border-width: 5px;
+      }
+
+      .document-wrap iframe {
+        height: 600px;
+        border-width: 3px;
+      }
+
+      .document-button {
+        width: 100%;
+        max-width: 340px;
+        padding: .9rem 1rem;
+      }
+
+      .corner-art {
+        font-size: 1.55rem;
+      }
+
+      .forest-strip {
+        font-size: 1.25rem;
+        letter-spacing: .25rem;
+      }
+
+      .fox-sticker {
+        width: 58px;
+        height: 58px;
+        border-width: 2px;
+        font-size: 2.35rem;
+      }
+
+      .fox-one { top: 65px; left: 6px; }
+      .fox-two { right: 6px; bottom: 65px; }
+      .top-right { right: 68px; }
+
+      .theme-button {
+        top: 16px;
+        right: 14px;
+        width: 48px;
+        height: 48px;
+        border-width: 2px;
+        font-size: 1.65rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Back arrow beside the sun/moon control. -->
+  <a
+    class="back-button"
+    href="https://cookey12563.github.io/ACC-PORTAL/main.html"
+    aria-label="Back to portal"
+    title="Back to portal"
+  >
+    <span aria-hidden="true">🏠</span>
+  </a>
+
+  <button
+    class="theme-button"
+    id="theme-button"
+    type="button"
+    aria-label="Switch to dark mode"
+    aria-pressed="false"
+    title="Switch to dark mode"
+  >
+    <span class="moon-icon" aria-hidden="true">🌙</span>
+    <span class="sun-icon" aria-hidden="true">☀️</span>
+  </button>
+
+  <!-- Floating fundraiser. -->
+  <section
+    class="fundraiser"
+    id="fundraiser"
+    aria-labelledby="fundraiser-heading"
+  >
+    <div
+      class="fundraiser-handle"
+      id="fundraiser-handle"
+      tabindex="0"
+      aria-label="Move fundraiser panel. Drag or use arrow keys."
+      title="Drag to move, or focus here and use arrow keys"
+    >
+      <h2 id="fundraiser-heading">💛 Club supplies • $175 goal</h2>
+
+      <button
+        class="fundraiser-toggle"
+        id="fundraiser-toggle"
+        type="button"
+        aria-label="Minimize fundraiser"
+        aria-expanded="true"
+        aria-controls="fundraiser-body"
+        title="Minimize fundraiser"
+      >−</button>
+    </div>
+
+    <div class="fundraiser-body" id="fundraiser-body">
+      <p>Help us reach $175 for club supplies! Every donation helps 💛</p>
+
+      <!-- Elfsight Number Counter | ACC Money Goal test -->
+      <script src="https://elfsightcdn.com/platform.js" async></script>
+
+      <div
+        class="elfsight-app-cddc3394-1c83-4d8a-a52a-54eba497a621"
+        data-elfsight-app-lazy
+      ></div>
+    </div>
+  </section>
+
+  <!-- Decorations. -->
+  <div class="border-decoration top-left" aria-hidden="true">
+    <div class="corner-art">🍂 ✦ 🍄<br />🌿 🐾 🌙</div>
+  </div>
+
+  <div class="border-decoration top-right" aria-hidden="true">
+    <div class="corner-art">🌙 🐾 🌿<br />🍄 ✦ 🍂</div>
+  </div>
+
+  <div class="border-decoration bottom-left" aria-hidden="true">
+    <div class="corner-art">🌿 🍄 ✦<br />🐾 🍂 🌙</div>
+  </div>
+
+  <div class="border-decoration bottom-right" aria-hidden="true">
+    <div class="corner-art">✦ 🍄 🌿<br />🌙 🍂 🐾</div>
+  </div>
+
+  <div class="forest-strip forest-top" aria-hidden="true">
+    🌲 🍂 ✦ 🌿 🍄 🐾 🌲 🍂 ✦ 🌿 🍄 🐾 🌙 🌲 🍂 ✦ 🌿 🍄 🐾 🌙
+  </div>
+
+  <div class="forest-strip forest-bottom" aria-hidden="true">
+    🍄 🌿 🐾 ✦ 🍂 🌲 🌙 🍄 🌿 🐾 ✦ 🍂 🌲 🌙 🍄 🌿 🐾 ✦ 🍂 🌲 🌙
+  </div>
+
+  <div class="fox-sticker fox-one" aria-hidden="true">🦊</div>
+  <div class="fox-sticker fox-two" aria-hidden="true">🦊</div>
+
+  <!-- Portal content. -->
+  <main class="portal-shell">
+    <section class="portal-card" aria-label="ACC PORTAL">
+      <header class="portal-header">
+        <span class="header-fox" aria-hidden="true">🦊</span>
+        <h1>ACC PORTAL</h1>
+        <span class="header-fox" aria-hidden="true">🦊</span>
+      </header>
+
+      <div class="document-wrap">
+        <iframe
+          title="ACC PORTAL Google Document"
+          src="https://docs.google.com/document/d/e/2PACX-1vRhTXdbODVZP9aERGFNS_pmWoYhi370c3TNqlrEliPq_zTAP6krnmojv3i7x80Mhoh8TUuYX9MR3TF9/pub?embedded=true"
+          loading="lazy"
+        ></iframe>
+      </div>
+
+      <div class="document-button-wrap">
+        <a
+          class="document-button"
+          href="https://docs.google.com/document/d/e/2PACX-1vRhTXdbODVZP9aERGFNS_pmWoYhi370c3TNqlrEliPq_zTAP6krnmojv3i7x80Mhoh8TUuYX9MR3TF9/pub"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          📄 Open in a new tab ↗
+        </a>
+      </div>
+
+      <p class="portal-footer">
+        ✦ Welcome to the fox den — your activities, slides, and updates
+        live here. ✦
+      </p>
+    </section>
+  </main>
+
+  <script>
+    /* Theme toggle. */
+    const themeButton = document.getElementById("theme-button");
+    const root = document.documentElement;
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+    function currentTheme() {
+      return root.dataset.theme === "dark" ? "dark" : "light";
+    }
+
+    function updateThemeButton() {
+      const isDark = currentTheme() === "dark";
+      const label = isDark
+        ? "Switch to light mode"
+        : "Switch to dark mode";
+
+      themeButton.setAttribute("aria-label", label);
+      themeButton.setAttribute("aria-pressed", String(isDark));
+      themeButton.title = label;
+
+      themeColorMeta.setAttribute(
+        "content",
+        isDark ? "#25282b" : "#f5e4c5"
+      );
+    }
+
+    updateThemeButton();
+
+    themeButton.addEventListener("click", () => {
+      const nextTheme = currentTheme() === "dark" ? "light" : "dark";
+
+      if (nextTheme === "dark") {
+        root.dataset.theme = "dark";
+      } else {
+        delete root.dataset.theme;
+      }
+
+      localStorage.setItem("acc-portal-theme", nextTheme);
+      updateThemeButton();
+    });
+
+    /* Floating fundraiser controls. */
+    const fundraiser = document.getElementById("fundraiser");
+    const handle = document.getElementById("fundraiser-handle");
+    const toggle = document.getElementById("fundraiser-toggle");
+    const fundraiserBody = document.getElementById("fundraiser-body");
+
+    function moveFundraiser(x, y) {
+      const margin = 8;
+
+      const maxX = Math.max(
+        margin,
+        window.innerWidth - fundraiser.offsetWidth - margin
+      );
+
+      const maxY = Math.max(
+        margin,
+        window.innerHeight - fundraiser.offsetHeight - margin
+      );
+
+      fundraiser.style.left =
+        Math.min(Math.max(margin, x), maxX) + "px";
+
+      fundraiser.style.top =
+        Math.min(Math.max(margin, y), maxY) + "px";
+    }
+
+    function keepFundraiserOnScreen() {
+      const rect = fundraiser.getBoundingClientRect();
+      moveFundraiser(rect.left, rect.top);
+    }
+
+    toggle.addEventListener("click", () => {
+      const collapsed = !fundraiserBody.hidden;
+
+      fundraiserBody.hidden = collapsed;
+      fundraiser.classList.toggle("collapsed", collapsed);
+      toggle.textContent = collapsed ? "+" : "−";
+      toggle.setAttribute("aria-expanded", String(!collapsed));
+
+      const label = collapsed
+        ? "Expand fundraiser"
+        : "Minimize fundraiser";
+
+      toggle.setAttribute("aria-label", label);
+      toggle.title = label;
+
+      keepFundraiserOnScreen();
+    });
+
+    let drag = null;
+
+    handle.addEventListener("pointerdown", (event) => {
+      if (event.target.closest("button")) return;
+      if (!event.isPrimary || event.button !== 0) return;
+
+      const rect = fundraiser.getBoundingClientRect();
+
+      drag = {
+        pointerId: event.pointerId,
+        offsetX: event.clientX - rect.left,
+        offsetY: event.clientY - rect.top
+      };
+
+      handle.setPointerCapture(event.pointerId);
+      fundraiser.classList.add("dragging");
+      event.preventDefault();
+    });
+
+    handle.addEventListener("pointermove", (event) => {
+      if (!drag || event.pointerId !== drag.pointerId) return;
+
+      moveFundraiser(
+        event.clientX - drag.offsetX,
+        event.clientY - drag.offsetY
+      );
+    });
+
+    function endDrag(event) {
+      if (!drag || event.pointerId !== drag.pointerId) return;
+
+      drag = null;
+      fundraiser.classList.remove("dragging");
+    }
+
+    handle.addEventListener("pointerup", endDrag);
+    handle.addEventListener("pointercancel", endDrag);
+    handle.addEventListener("lostpointercapture", endDrag);
+
+    /* Keyboard movement. */
+    handle.addEventListener("keydown", (event) => {
+      if (event.target !== handle) return;
+
+      const step = event.shiftKey ? 30 : 10;
+
+      const directions = {
+        ArrowLeft: [-step, 0],
+        ArrowRight: [step, 0],
+        ArrowUp: [0, -step],
+        ArrowDown: [0, step]
+      };
+
+      const direction = directions[event.key];
+      if (!direction) return;
+
+      event.preventDefault();
+
+      const rect = fundraiser.getBoundingClientRect();
+
+      moveFundraiser(
+        rect.left + direction[0],
+        rect.top + direction[1]
+      );
+    });
+
+    window.addEventListener("resize", keepFundraiserOnScreen);
+
+    const fundraiserObserver = new ResizeObserver(
+      keepFundraiserOnScreen
+    );
+
+    fundraiserObserver.observe(fundraiser);
+  </script>
+</body>
+</html>
